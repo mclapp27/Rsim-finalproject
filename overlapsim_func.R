@@ -9,7 +9,7 @@
 #' @param maxphen maximum number of phenotypes any single endophenotype can affect
 #' @return returns a list containing 5 data frame elements: SNP data, EP data, beta data, Design matrix, and phenotype data
 
-overlap_sim <- function(N = 10000, j, p, lamO = 0.95, lamU = 0.3, pleiotropy = c(0.5, 0.8), maxphen = 7){
+overlap_sim <- function(N = 1000, j, p, lamO = 0.95, lamU = 0.3, pleiotropy = c(0.5, 0.8), maxphen = 7){
   #error catches
   conditions <- c(N, j, p, lamO, lamU, pleiotropy, maxphen)
   lams <- c(lamO, lamU)
@@ -46,24 +46,12 @@ overlap_sim <- function(N = 10000, j, p, lamO = 0.95, lamU = 0.3, pleiotropy = c
     Phenos[, i] <- scale(rowMeans(EPs[, design])) * lamO + rnorm(N, 0, 1) * lamU
   }
   #store results
-  extra_data <- list(
-    betas = betas,
-    EPs = EPs,
-    Design = Design
-  )
-  #format for CFA eval
-  SNPsPhenos <- cbind(SNPs, Phenos)
-  #format SNP and phenotype data for Q comparison
-  SNPlist <- lapply(seq_len(ncol(SNPs)), function(i) SNPs[,i]) #make every list element data from 1 snp
-  Bind <- lapply(SNPlist, cbind, Phenos) #bind single SNP data to all pheno data
-  Bind <- lapply(Bind, as.matrix) #convert data within list to matrices
-  Bind <- lapply(Bind, function(df) { #change first col name to SNP for model read
-    colnames(df)[1] <- "SNP"
-    df})
-  #output results as 3 lists
   results <- list(
-    effects = extra_data, 
-    CFAMatrix = SNPsPhenos, 
-    QMatrix = Bind)
+    SNPs = SNPs, 
+    betas = betas, 
+    EPs = EPs, 
+    Design = Design, 
+    Phenos = Phenos,
+    SNPsPhenos = cbind(SNPs, Phenos))
   return(results)
 }
