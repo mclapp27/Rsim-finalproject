@@ -227,9 +227,14 @@ within_sds <- function(data){
 #array of means by iteration for each generating model
 Mmeans <- sapply(MutDF, within_means)
 Omeans <- sapply(OverDF, within_means)
+#means across all iterations
+rowMeans(Mmeans)
+rowMeans(Omeans)
 
 Msds <- sapply(MutDF, within_sds)
 Osds <- sapply(OverDF, within_sds)
+rowMeans(Msds)
+rowMeans(Osds)
 
 ##distributions of Q and Association for visualization
 chidist<-data.frame(group=c(rep("Mutualism", ncol(Mmeans)), 
